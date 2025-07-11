@@ -119,30 +119,32 @@ variable "ip_rules" {
 
 Example usage: 
 
-module "aks" {
-  source                    = "github.com/UKHO/tfmodule-aks"
-  resource_group_name       = azurerm_resource_group.this.name
-  location                  = var.location_primary
-  aks_name                  = "${local.resource_prefix}-aks"
-  tenant_id                 = var.tenant_id
-  subscription_id           = var.subscription_id
-  principal_id              = data.azuread_service_principal.terraform.object_id
-  aks_sku                   = var.aks_sku
-  aks_kubernetes_version    = var.aks_kubernetes_version
-  aks_system_node_vm_size   = var.aks_system_node_vm_size
-  aks_system_node_disk_size = var.aks_system_node_disk_size
-  aks_system_node_min_count = var.aks_system_node_min_count
-  aks_system_node_max_count = var.aks_system_node_max_count
-  vnet_subnet_id            = data.azurerm_subnet.spoke-nodes-subnet.id
-  vnet_id                   = data.azurerm_virtual_network.spoke.id
-  ip_rules                  = local.ip_rules
-  tags                      = var.tags
-  user_node_pools = [{
-    name      = "linuxpool"
-    os_type   = "Linux"
-    vm_size   = var.aks_linux_node_vm_size
-    disk_size = var.aks_linux_node_disk_size
-    min_count = var.aks_linux_node_min_count
-    max_count = var.aks_linux_node_max_count
+locals {
+  databases = [{
+    name      = "example"
   }]
+}
+
+module "postgres" {
+  source                        = "github.com/UKHO/tfmodule-postgres?ref=229597-postgres"
+  resource_group_name           = azurerm_resource_group.this.name
+  location                      = var.location_primary
+  postgres_name                = "${local.resource_prefix}-postgres"
+  short_name                    = local.resource_prefix_short
+  tenant_id                     = var.tenant_id
+  subscription_id               = var.subscription_id
+  principal_id                  = data.azuread_service_principal.terraform.object_id
+  postgres_sku                  = var.postgres_sku
+  postgres_version              = var.postgres_version
+  postgres_storage_mb           = var.postgres_storage_mb
+  postgres_storage_tier         = var.postgres_storage_tier
+  postgres_admin_user           = var.postgres_admin_user
+  vnet_id                       = data.azurerm_virtual_network.spoke.id
+  auto_grow_enabled             = true
+  backup_retention_days         = 35
+  geo_redundant_backup_enabled  = true
+  public_network_access_enabled = true
+  ip_rules                      = local.ip_rules
+  tags                          = var.tags
+  databases                     = local.databases
 }

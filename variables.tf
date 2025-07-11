@@ -103,7 +103,7 @@ variable "vnet_id" {
 variable "backup_retention_days" {
   type        = number
   description = "Backup retention period in days"
-  default     = 30
+  default     = 35
 
   validation {
     condition     = var.backup_retention_days > 0
