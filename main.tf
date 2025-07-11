@@ -27,41 +27,41 @@ resource "random_password" "postgres_admin_password" {
 }
 
 resource "azurerm_postgresql_flexible_server_database" "databases" {
-  for_each = { for i, s in var.databases : i => s } 
+  for_each = { for i, s in var.databases : i => s }
 
-  name                = each.value.name
-  server_id           = azurerm_postgresql_flexible_server.this.id
-  charset             = each.value.charset
-  collation           = each.value.collation
+  name      = each.value.name
+  server_id = azurerm_postgresql_flexible_server.this.id
+  charset   = each.value.charset
+  collation = each.value.collation
 }
 
 # Bodge as azurerm_postgresql_flexible_server doesn't support 'Allow access to Azure services' setting yet
 resource "azurerm_postgresql_flexible_server_firewall_rule" "azure_services" {
-  name                = "azure-services-rule"
-  server_id         = azurerm_postgresql_flexible_server.this.id
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
+  name             = "azure-services-rule"
+  server_id        = azurerm_postgresql_flexible_server.this.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "postgres_log_checkpoints" {
-  name                = "log_checkpoints"
-  server_id           = azurerm_postgresql_flexible_server.this.id
-  value               = "on"
+  name      = "log_checkpoints"
+  server_id = azurerm_postgresql_flexible_server.this.id
+  value     = "on"
 }
 resource "azurerm_postgresql_flexible_server_configuration" "postgres_log_connections" {
-	name                = "log_connections"
-  server_id           = azurerm_postgresql_flexible_server.this.id
-	value               = "on"
-  }
+  name      = "log_connections"
+  server_id = azurerm_postgresql_flexible_server.this.id
+  value     = "on"
+}
 
 resource "azurerm_postgresql_flexible_server_configuration" "postgres_log_connection_throttling" {
-	name                = "connection_throttle.enable"
-  server_id           = azurerm_postgresql_flexible_server.this.id
-	value               = "on"
+  name      = "connection_throttle.enable"
+  server_id = azurerm_postgresql_flexible_server.this.id
+  value     = "on"
 }
 
 resource "azurerm_private_dns_zone" "postgres_private_dns" {
-  name                = "${var.postgres_name}.postgres.database.azure.com"
+  name                = "${var.short_name}.postgres.database.azure.com"
   resource_group_name = var.resource_group_name
   lifecycle {
     ignore_changes = [
@@ -71,7 +71,7 @@ resource "azurerm_private_dns_zone" "postgres_private_dns" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "postgres_private_dns_link" {
-  name                  = "${var.postgres_name}vnetzone.com"
+  name                  = "${var.short_name}vnetzone.com"
   private_dns_zone_name = azurerm_private_dns_zone.postgres_private_dns.name
   virtual_network_id    = var.vnet_id
   resource_group_name   = var.resource_group_name

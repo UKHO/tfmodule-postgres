@@ -43,6 +43,10 @@ variable "postgres_name" {
   type = string
 }
 
+variable "short_name" { 
+  type = string
+}
+
 variable "postgres_sku" { 
   type = string
 }

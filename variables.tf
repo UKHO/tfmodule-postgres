@@ -25,7 +25,7 @@ variable "principal_id" {
   default     = null
 }
 
-variable "postgres_name" { 
+variable "postgres_name" {
   type = string
 
   validation {
@@ -34,7 +34,16 @@ variable "postgres_name" {
   }
 }
 
-variable "postgres_sku" { 
+variable "short_name" {
+  type = string
+
+  validation {
+    condition     = length(var.short_name) > 0
+    error_message = "The short_name variable must be supplied"
+  }
+}
+
+variable "postgres_sku" {
   type = string
 
   validation {
@@ -43,7 +52,7 @@ variable "postgres_sku" {
   }
 }
 
-variable "postgres_version" { 
+variable "postgres_version" {
   type = string
 
   validation {
@@ -82,7 +91,7 @@ variable "postgres_storage_tier" {
   }
 }
 
-variable "vnet_id" { 
+variable "vnet_id" {
   type = string
 
   validation {
