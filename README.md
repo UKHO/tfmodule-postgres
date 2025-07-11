@@ -117,12 +117,6 @@ variable "ip_rules" {
   type        = list(string)
 }
 
-variable "subnet_ids" {
-  description = "List of subnet IDs that are allowed to access the AKS Cluster"
-  type        = list(string)
-}
-
-
 Example usage: 
 
 module "aks" {
@@ -142,7 +136,6 @@ module "aks" {
   vnet_subnet_id            = data.azurerm_subnet.spoke-nodes-subnet.id
   vnet_id                   = data.azurerm_virtual_network.spoke.id
   ip_rules                  = formatlist("%s/32", local.ip_rules)
-  subnet_ids                = local.subnet_ids
   tags                      = var.tags
   user_node_pools = [{
     name      = "linuxpool"
