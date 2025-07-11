@@ -87,7 +87,7 @@ resource "azurerm_mysql_flexible_server_firewall_rule" "firewall_rules" {
   
   name                = "IPAddress_${replace(each.value, ".", "")}"
   resource_group_name = var.resource_group_name
-  server_name         = azurerm_mysql_flexible_server.this.name
+  server_name         = azurerm_postgresql_flexible_server.this.name
   start_ip_address    = each.value
   end_ip_address      = each.value
 }
