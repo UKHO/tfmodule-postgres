@@ -135,7 +135,7 @@ module "aks" {
   aks_system_node_max_count = var.aks_system_node_max_count
   vnet_subnet_id            = data.azurerm_subnet.spoke-nodes-subnet.id
   vnet_id                   = data.azurerm_virtual_network.spoke.id
-  ip_rules                  = formatlist("%s/32", local.ip_rules)
+  ip_rules                  = local.ip_rules
   tags                      = var.tags
   user_node_pools = [{
     name      = "linuxpool"

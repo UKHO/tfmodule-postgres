@@ -83,7 +83,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgres_private_dns_l
 }
 
 resource "azurerm_mysql_flexible_server_firewall_rule" "firewall_rules" {
-  for_each = var.ip_rules
+  for_each = toset(var.ip_rules)
   
   name                = "IPAddress_${replace(each.value, ".", "")}"
   resource_group_name = var.resource_group_name
