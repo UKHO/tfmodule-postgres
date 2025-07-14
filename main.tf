@@ -68,6 +68,8 @@ resource "azurerm_private_dns_zone" "postgres_private_dns" {
       tags
     ]
   }
+
+  depends_on = [ azurerm_postgresql_flexible_server.this ]
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "postgres_private_dns_link" {
@@ -80,6 +82,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgres_private_dns_l
       tags
     ]
   }
+
+  depends_on = [ azurerm_postgresql_flexible_server.this ]
 }
 
 resource "azurerm_mysql_flexible_server_firewall_rule" "firewall_rules" {
