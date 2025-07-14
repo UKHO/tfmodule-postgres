@@ -35,14 +35,6 @@ resource "azurerm_postgresql_flexible_server_database" "databases" {
   collation = each.value.collation
 }
 
-# Bodge as azurerm_postgresql_flexible_server doesn't support 'Allow access to Azure services' setting yet
-resource "azurerm_postgresql_flexible_server_firewall_rule" "azure_services" {
-  name             = "azure-services-rule"
-  server_id        = azurerm_postgresql_flexible_server.this.id
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "0.0.0.0"
-}
-
 resource "azurerm_postgresql_flexible_server_configuration" "postgres_log_checkpoints" {
   name      = "log_checkpoints"
   server_id = azurerm_postgresql_flexible_server.this.id
@@ -69,7 +61,7 @@ resource "azurerm_private_dns_zone" "postgres_private_dns" {
     ]
   }
 
-  depends_on = [ azurerm_postgresql_flexible_server.this ]
+  depends_on = [azurerm_postgresql_flexible_server.this]
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "postgres_private_dns_link" {
@@ -83,15 +75,22 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgres_private_dns_l
     ]
   }
 
-  depends_on = [ azurerm_postgresql_flexible_server.this ]
+  depends_on = [azurerm_postgresql_flexible_server.this]
 }
 
-resource "azurerm_mysql_flexible_server_firewall_rule" "firewall_rules" {
+# Bodge as azurerm_postgresql_flexible_server doesn't support 'Allow access to Azure services' setting yet
+resource "azurerm_postgresql_flexible_server_firewall_rule" "azure_services" {
+  name             = "azure-services-rule"
+  server_id        = azurerm_postgresql_flexible_server.this.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rules" {
   for_each = toset(var.ip_rules)
-  
-  name                = "IPAddress_${replace(each.value, ".", "")}"
-  resource_group_name = var.resource_group_name
-  server_name         = azurerm_postgresql_flexible_server.this.name
-  start_ip_address    = each.value
-  end_ip_address      = each.value
+
+  name             = "IPAddress_${replace(each.value, ".", "")}"
+  server_id        = azurerm_postgresql_flexible_server.this.id
+  start_ip_address = each.value
+  end_ip_address   = each.value
 }
