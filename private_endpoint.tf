@@ -17,19 +17,3 @@ module "private_endpoint" {
   dns_resource_group          = var.dns_resource_group
   subresource_names           = ["postgresqlServer"]
 }
-
-resource "terraform_data" "app_routing" {
-  triggers_replace = [
-    azurerm_postgresql_flexible_server.this.id,
-  ]
-
-  provisioner "local-exec" {
-    when    = create
-    command = "az aks approuting enable -n ${azurerm_postgresql_flexible_server.this.name} -g ${var.resource_group_name}"
-  }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "az aks approuting disable -n ${azurerm_postgresql_flexible_server.this.name} -g ${var.resource_group_name}"
-  }
-}
