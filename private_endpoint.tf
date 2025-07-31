@@ -14,8 +14,8 @@ module "private_endpoint" {
   pe_resource_group           = [var.resource_group_name]
   pe_resource_group_locations = [var.location]
   dns_resource_group          = var.dns_resource_group_name
-  zone_group                  = local.zone_group
-  dns_zone                    = local.dns_zone_name
+  zone_group                  = "private-dns-zone-group"
+  dns_zone                    = "privatelink.postgres.database.azure.com"
   subresource_names           = ["postgresqlServer"]
 
   count = var.pe_enabled ? 1 : 0
