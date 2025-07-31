@@ -1,28 +1,31 @@
 variable "resource_group_name" {
   description = "Name of the resource group"
   type        = string
+
+  validation {
+    condition     = length(var.resource_group_name) > 0
+    error_message = "The vnet_resource_group_name variable must be supplied"
+  }
 }
 
 variable "location" {
   description = "Azure region"
   type        = string
+
+  validation {
+    condition     = length(var.location) > 0
+    error_message = "The location variable must be supplied"
+  }
 }
 
 variable "tenant_id" {
   description = "Azure Tenant ID"
   type        = string
-}
 
-variable "subscription_id" {
-  description = "Azure Subscription ID"
-  type        = string
-  default     = null
-}
-
-variable "principal_id" {
-  description = "The object id of the terraform principal (Optional). If not supplied then data.azurerm_client_config.current.object_id will be used"
-  type        = string
-  default     = null
+  validation {
+    condition     = length(var.tenant_id) > 0
+    error_message = "The tenant_id variable must be supplied"
+  }
 }
 
 variable "postgres_name" {
@@ -91,12 +94,22 @@ variable "postgres_storage_tier" {
   }
 }
 
-variable "vnet_id" {
+variable "vnet_name" {
   type = string
 
   validation {
-    condition     = length(var.vnet_id) > 0
-    error_message = "The vnet_id variable must be supplied"
+    condition     = length(var.vnet_name) > 0
+    error_message = "The vnet_name variable must be supplied"
+  }
+}
+
+variable "vnet_resource_group_name" {
+  type    = string
+  default = "m-spokeconfig-rg"
+
+  validation {
+    condition     = length(var.vnet_resource_group_name) > 0
+    error_message = "The vnet_resource_group_name variable must be supplied"
   }
 }
 
@@ -159,4 +172,42 @@ variable "ip_rules" {
   description = "List of IP addresses that are allowed to access the AKS Cluster"
   type        = list(string)
   default     = []
+}
+
+# PE
+
+variable "pe_enabled" {
+  description = "Enable private endpoint"
+  type        = bool
+  default     = true
+}
+
+variable "pe_environment" {
+    description = "environment for private endpoint (for example dev | prd | qa | pre)"
+    default = ""
+
+  validation {
+    condition     = var.pe_enabled == true ? length(var.pe_environment) > 0 : true
+    error_message = "The pe_environment variable must be supplied"
+  }
+}
+
+variable "pe_subnet_name" {
+  description = "subnet name that the private endpoint will associate"
+  default     = ""
+
+  validation {
+    condition     = var.pe_enabled == true ? length(var.pe_subnet_name) > 0 : true
+    error_message = "The pe_subnet_name variable must be supplied"
+  }
+}
+
+variable "dns_resource_group_name" {
+  description = "dns resource group name, please change domain-rg to either business-rg or engineering-rg"
+  default     = ""
+
+  validation {
+    condition     = var.pe_enabled == true ? length(var.dns_resource_group_name) > 0 : true
+    error_message = "The dns_resource_group_name variable must be supplied"
+  }
 }
