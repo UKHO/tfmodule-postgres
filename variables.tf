@@ -211,23 +211,3 @@ variable "dns_resource_group_name" {
     error_message = "The dns_resource_group_name variable must be supplied"
   }
 }
-
-variable "dns_zone_group_name" {
-  description = "private dns zone group"
-  default     = ""
-
-  validation {
-    condition     = var.pe_enabled == true ? length(var.dns_zone_group_name) > 0 : true
-    error_message = "The dns_zone_group_name variable must be supplied"
-  }
-}
-
-variable "dns_zone_name" {
-  description = "alias to create private dns zone - be aware this is dependant on the endpoint"
-  default     = "privatelink.azurewebsites.net"
-
-  validation {
-    condition     = var.pe_enabled == true ? length(var.dns_zone_name) > 0 : true
-    error_message = "The dns_zone_name variable must be supplied"
-  }
-}
